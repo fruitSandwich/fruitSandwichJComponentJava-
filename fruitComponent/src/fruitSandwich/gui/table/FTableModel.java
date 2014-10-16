@@ -1,5 +1,7 @@
 package fruitSandwich.gui.table;
 
+import java.util.Arrays;
+
 import javax.swing.table.AbstractTableModel;
 
 import fruitSandwich.util.FArrays;
@@ -17,14 +19,17 @@ public class FTableModel extends AbstractTableModel {
 
 	private Object[][] tablePageValue;// 单元格的值
 	boolean withCheckbox;// 第一列是否带复选框
-	int controlColumnIndex = 0;
+
+	private String[] controlColumnName;
 
 	public FTableModel(String[] columnName, Object[][] pageValue,
-			int controlColumnIndex, boolean WITH_CHECKBOX) {
+			String[] controlColumnName, boolean WITH_CHECKBOX) {
 		this.withCheckbox = WITH_CHECKBOX;
-		this.controlColumnIndex = controlColumnIndex;
+		this.controlColumnName = controlColumnName;
 		this.tableColumnName = columnName;
 		this.tablePageValue = pageValue;
+
+		System.out.println(Arrays.toString(columnName));
 
 		if (WITH_CHECKBOX) {
 			String[] copyColumnName = FArrays.moveFillFirstBlank(
@@ -40,21 +45,24 @@ public class FTableModel extends AbstractTableModel {
 			}
 			this.tablePageValue = copyObjects;
 		}
-		if (controlColumnIndex > 0) {
+		if (controlColumnName != null && controlColumnName.length > 0) {
 			String[] copyColumnName = FArrays.moveFillLastBlank(
-					this.tableColumnName, controlColumnIndex);
-			for (int i = 0; i < controlColumnIndex; i++) {
-				copyColumnName[copyColumnName.length - controlColumnIndex + i] = "操作";
+					this.tableColumnName, controlColumnName.length);
+			for (int i = 0; i < controlColumnName.length; i++) {
+				copyColumnName[copyColumnName.length - controlColumnName.length
+						+ i] = this.controlColumnName[i];
 			}
 			this.tableColumnName = copyColumnName;
 
 			Object[][] copyObjects = new Object[tablePageValue.length][];
 			for (int i = 0; i < tablePageValue.length; i++) {
 				copyObjects[i] = FArrays.moveFillLastBlankObject(
-						tablePageValue[i], controlColumnIndex);
+						tablePageValue[i], controlColumnName.length);
 			}
 			this.tablePageValue = copyObjects;
 		}
+
+		System.out.println(Arrays.toString(columnName));
 
 	}
 
@@ -96,7 +104,7 @@ public class FTableModel extends AbstractTableModel {
 		if (withCheckbox && column == 0) {
 			return true;
 		}
-		if (column > tableColumnName.length - controlColumnIndex - 1) {
+		if (column > tableColumnName.length - controlColumnName.length - 1) {
 			return true;
 		}
 		return false;

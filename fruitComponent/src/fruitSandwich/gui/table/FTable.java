@@ -13,6 +13,7 @@ public class FTable extends JTable implements FITableRefresh {
 	private static final long serialVersionUID = -7244671344616243095L;
 	private FTableDataGenerate dataGenerate;
 	private List<FITableControlColumnClickEvent> clickEventList;
+	private String[] controlColumnName;
 
 	public static final int SIMPLE_UNEDITEABLE_MODEL = 0;// 前后列都不提供功能，只显示数据用的表格
 	public static final int FIRSTCOLUMN_CHECKBOX_MODEL = 1;// 第一列提供选择复选框的表格
@@ -66,9 +67,10 @@ public class FTable extends JTable implements FITableRefresh {
 	 *            表格控制列事件
 	 */
 	public void initializeDataSourceAndEvent(FTableDataGenerate dataGenerate,
-			List<FITableControlColumnClickEvent> controlColumnClickEvent) {
+			List<FITableControlColumnClickEvent> controlColumnClickEvent,String[] controlColumnName) {
 		this.dataGenerate = dataGenerate;
 		this.clickEventList = controlColumnClickEvent;
+		this.controlColumnName = controlColumnName;
 
 		String[] controlColumnNames = new String[clickEventList.size()];
 		for (int i = 0; i < controlColumnNames.length; i++) {
@@ -88,15 +90,15 @@ public class FTable extends JTable implements FITableRefresh {
 			switch (tableShowModel) {
 			case 0:
 				ftableModel = new FTableModel(columnName, data,
-						clickEventList.size(), false);
+						controlColumnName, false);
 				break;
 			case 1:
 				ftableModel = new FTableModel(columnName, data,
-						clickEventList.size(), true);
+						controlColumnName, true);
 				break;
 			default:
 				ftableModel = new FTableModel(columnName, data,
-						clickEventList.size(), false);
+						controlColumnName, false);
 				break;
 			}
 			this.setModel(ftableModel);

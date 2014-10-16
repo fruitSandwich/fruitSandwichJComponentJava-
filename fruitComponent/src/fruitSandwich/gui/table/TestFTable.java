@@ -97,12 +97,11 @@ public class TestFTable {
 		clickEvents.add(new FITableControlColumnClickEvent() {
 
 			@Override
-			public String click(int row) {
+			public void click(int row) {
 				String value = simpleTable.getModel().getValueAt(row, 1)
 						.toString();
 				System.out.println("详情:" + value);
 				JOptionPane.showMessageDialog(frame, value);
-				return simpleTable.getColumnCount() + "";
 			}
 
 			@Override
@@ -113,12 +112,11 @@ public class TestFTable {
 		clickEvents.add(new FITableControlColumnClickEvent() {
 
 			@Override
-			public String click(int row) {
+			public void click(int row) {
 				String value = simpleTable.getModel().getValueAt(row, 1)
 						.toString();
 				System.out.println("删除:" + value);
 				JOptionPane.showMessageDialog(button, value);
-				return value;
 			}
 
 			@Override
@@ -127,7 +125,8 @@ public class TestFTable {
 			}
 		});
 
-		simpleTable.initializeDataSourceAndEvent(dataGenerate, clickEvents);
+		simpleTable.initializeDataSourceAndEvent(dataGenerate, clickEvents,
+				new String[] { "详情", "操作" });
 
 		scrollPane.setViewportView(simpleTable);
 
