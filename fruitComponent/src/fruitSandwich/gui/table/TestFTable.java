@@ -2,13 +2,16 @@ package fruitSandwich.gui.table;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
-import fruitSandwich.gui.table.FITableLastColumnClickEvent;
+import fruitSandwich.gui.table.FITableControlColumnClickEvent;
 import fruitSandwich.gui.table.FTable;
 import fruitSandwich.gui.table.FTableDataGenerate;
 import fruitSandwich.gui.table.FTableDefaultPagingBar;
+
 import javax.swing.JScrollPane;
 
 public class TestFTable {
@@ -83,18 +86,39 @@ public class TestFTable {
 			}
 		};
 
-		final FTable simpleTable = new FTable(
-				FTable.BOTH_CHECKBOX_ASSOCIATE_MODEL);
-		simpleTable.initializeDataSourceAndEvent(dataGenerate,
-				new FITableLastColumnClickEvent() {
+		final FTable simpleTable = new FTable(FTable.FIRSTCOLUMN_CHECKBOX_MODEL);
 
-					@Override
-					public void click(int row) {
-						String value = simpleTable.getModel()
-								.getValueAt(row, 1).toString();
-						System.out.println(value);
-					}
-				});
+		List<FITableControlColumnClickEvent> clickEvents = new ArrayList<FITableControlColumnClickEvent>();
+		clickEvents.add(new FITableControlColumnClickEvent() {
+
+			@Override
+			public void click(int row) {
+				String value = simpleTable.getModel().getValueAt(row, 1)
+						.toString();
+				System.out.println("详情:" + value);
+			}
+
+			@Override
+			public String getCloumnName() {
+				return "详情";
+			}
+		});
+		clickEvents.add(new FITableControlColumnClickEvent() {
+
+			@Override
+			public void click(int row) {
+				String value = simpleTable.getModel().getValueAt(row, 1)
+						.toString();
+				System.out.println("删除:" + value);
+			}
+
+			@Override
+			public String getCloumnName() {
+				return "删除";
+			}
+		});
+
+		simpleTable.initializeDataSourceAndEvent(dataGenerate, clickEvents);
 
 		scrollPane.setViewportView(simpleTable);
 
@@ -103,5 +127,4 @@ public class TestFTable {
 		frame.getContentPane().add(tablePagingBar, BorderLayout.SOUTH);
 
 	}
-
 }

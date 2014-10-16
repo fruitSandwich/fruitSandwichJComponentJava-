@@ -2,6 +2,7 @@ package fruitSandwich.gui.table;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -11,21 +12,26 @@ public class FTable extends JTable implements FITableRefresh {
 
 	private static final long serialVersionUID = -7244671344616243095L;
 	private FTableDataGenerate dataGenerate;
-	private FITableLastColumnClickEvent clickEvent;
-	private String lastColumnValue = "详情";
+	private List<FITableControlColumnClickEvent> clickEventList;
 
-	public static final int SIMPLE_UNEDITEABLE_MODEL = 0;// 不可编辑只展示的表格
+	// private String lastColumnValue = "详情";
+
+	public static final int SIMPLE_UNEDITEABLE_MODEL = 0;// 前后列都不提供功能，只显示数据用的表格
 	public static final int FIRSTCOLUMN_CHECKBOX_MODEL = 1;// 第一列提供选择复选框的表格
-	public static final int LASTCOLUMN_ASSOCIATE_MODEL = 2;// 最后一列提供详情的表格
-	public static final int BOTH_CHECKBOX_ASSOCIATE_MODEL = 3;// 第一列带复选框最后一列带详情链接
 
-	private int TABLE_MODEL;// 表格模型代码
+	private int tableShowModel = 0;// 是否带复选框,默认不带
 	FTableModel ftableModel;// 真实的表格模型
 
 	/**
-	 * 构造默认表格，行颜色相间、高度设置等
+	 * 
+	 * @param dataGenerate
+	 *            数据源
+	 * @param controlColumnClickEvent
+	 *            控制列事件以及列名
+	 * @param CHECKBOX
+	 *            第一列是否带复选框
 	 */
-	public FTable(int tableModel) {
+	public FTable(int CHECKBOX) {
 		this.setRowHeight(30);
 		this.setAutoCreateRowSorter(true);
 		DefaultTableCellRenderer dtr = new DefaultTableCellRenderer() {
@@ -49,36 +55,22 @@ public class FTable extends JTable implements FITableRefresh {
 		this.setDefaultRenderer(int.class, dtr);
 		this.setDefaultRenderer(Integer.class, dtr);
 
-		this.TABLE_MODEL = tableModel;
+		this.tableShowModel = CHECKBOX;
+
 	}
 
 	/**
-	 * 分页默认表格初始化
-	 * 
-	 * 指定数据源生成器和点击事件以及最后一列显示内容
+	 * 初始化表格数据源以及表格控制列
 	 * 
 	 * @param dataGenerate
-	 * @param clickEvent
-	 * @param lastColumnValue
+	 *            表格数据源
+	 * @param controlColumnClickEvent
+	 *            表格控制列事件
 	 */
 	public void initializeDataSourceAndEvent(FTableDataGenerate dataGenerate,
-			FITableLastColumnClickEvent clickEvent, String lastColumnValue) {
-		this.lastColumnValue = lastColumnValue;
-		initializeDataSourceAndEvent(dataGenerate, clickEvent);
-	}
-
-	/**
-	 * 分页默认表格初始化
-	 * 
-	 * 指定数据源生成器和点击事件，最后一列名字默认为"详情"
-	 * 
-	 * @param dataGenerate
-	 * @param clickEvent
-	 */
-	public void initializeDataSourceAndEvent(FTableDataGenerate dataGenerate,
-			FITableLastColumnClickEvent clickEvent) {
+			List<FITableControlColumnClickEvent> controlColumnClickEvent) {
 		this.dataGenerate = dataGenerate;
-		this.clickEvent = clickEvent;
+		this.clickEventList = controlColumnClickEvent;
 		refreshData(0, 10);
 	}
 
@@ -90,34 +82,23 @@ public class FTable extends JTable implements FITableRefresh {
 			String[] columnName = dataGenerate.generateColumnName();
 			int allNum = dataGenerate.generateAllNum();
 
-			switch (TABLE_MODEL) {
-			case FIRSTCOLUMN_CHECKBOX_MODEL:
-				ftableModel = new FTableModel(columnName, data, true, false);
+			switch (tableShowModel) {
+			case 0:
+				ftableModel = new FTableModel(columnName, data, null, false);
 				break;
-			case LASTCOLUMN_ASSOCIATE_MODEL:
-				ftableModel = new FTableModel(columnName, data, false, true);
-				break;
-			case BOTH_CHECKBOX_ASSOCIATE_MODEL:
-				ftableModel = new FTableModel(columnName, data, true, true);
-				break;
-			case SIMPLE_UNEDITEABLE_MODEL:
-				ftableModel = new FTableModel(columnName, data, false, false);
+			case 1:
+				ftableModel = new FTableModel(columnName, data, null, true);
 				break;
 			default:
-				ftableModel = new FTableModel(columnName, data, false, false);
+				ftableModel = new FTableModel(columnName, data, null, false);
 				break;
 			}
 			this.setModel(ftableModel);
 
-			if (TABLE_MODEL == LASTCOLUMN_ASSOCIATE_MODEL
-					|| TABLE_MODEL == BOTH_CHECKBOX_ASSOCIATE_MODEL) {
-				renderLastColumn();
-			}
-			if (TABLE_MODEL == FIRSTCOLUMN_CHECKBOX_MODEL
-					|| TABLE_MODEL == BOTH_CHECKBOX_ASSOCIATE_MODEL) {
+			if (tableShowModel == FIRSTCOLUMN_CHECKBOX_MODEL) {
 				renderFirstColumn();
 			}
-
+			renderControlColumn();
 			return allNum;
 		}
 		return 0;
@@ -126,12 +107,19 @@ public class FTable extends JTable implements FITableRefresh {
 	/**
 	 * 渲染最后一列为链接按钮样式
 	 */
-	private void renderLastColumn() {
-		FTableButtonCellRenderer buttonCellRenderer = new FTableButtonCellRenderer(
-				lastColumnValue);
-		buttonCellRenderer.setClickEvent(clickEvent);
-		this.getColumnModel().getColumn(ftableModel.getColumnCount() - 1)
-				.setCellRenderer(buttonCellRenderer);
+	private void renderControlColumn() {
+		for (int i = 0; i < clickEventList.size(); i++) {
+			FITableControlColumnClickEvent tableControlColumnClickEvent = clickEventList
+					.get(i);
+			FTableButtonCellRenderer buttonCellRenderer = new FTableButtonCellRenderer(
+					tableControlColumnClickEvent.getCloumnName());
+			buttonCellRenderer.setClickEvent(tableControlColumnClickEvent);
+			this.getColumnModel()
+					.getColumn(
+							ftableModel.getColumnCount()
+									- clickEventList.size() + i)
+					.setCellRenderer(buttonCellRenderer);
+		}
 	}
 
 	/**

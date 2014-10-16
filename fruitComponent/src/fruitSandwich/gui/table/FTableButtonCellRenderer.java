@@ -22,9 +22,9 @@ class FTableButtonCellRenderer extends JPanel implements TableCellRenderer {
 	private static final long serialVersionUID = 822551354146132367L;
 
 	private JButton button;
-	private FITableLastColumnClickEvent clickEvent;
+	private FITableControlColumnClickEvent clickEvent;
 
-	public void setClickEvent(FITableLastColumnClickEvent clickEvent) {
+	public void setClickEvent(FITableControlColumnClickEvent clickEvent) {
 		this.clickEvent = clickEvent;
 	}
 

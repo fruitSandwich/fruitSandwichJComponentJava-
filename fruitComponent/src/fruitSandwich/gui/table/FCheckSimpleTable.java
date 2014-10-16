@@ -16,7 +16,7 @@ public class FCheckSimpleTable extends JTable implements FITableRefresh{
 	
 	
 	FTableDataGenerate dataGenerate;
-	FITableLastColumnClickEvent clickEvent;
+	FITableControlColumnClickEvent clickEvent;
 	String lastColumnValue = "详情";
 
 	/**
@@ -57,7 +57,7 @@ public class FCheckSimpleTable extends JTable implements FITableRefresh{
 	 * @param lastColumnValue
 	 */
 	public void initializeDataSourceAndEvent(FTableDataGenerate dataGenerate,
-			FITableLastColumnClickEvent clickEvent, String lastColumnValue) {
+			FITableControlColumnClickEvent clickEvent, String lastColumnValue) {
 		this.lastColumnValue = lastColumnValue;
 		initializeDataSourceAndEvent(dataGenerate, clickEvent);
 	}
@@ -71,7 +71,7 @@ public class FCheckSimpleTable extends JTable implements FITableRefresh{
 	 * @param clickEvent
 	 */
 	public void initializeDataSourceAndEvent(FTableDataGenerate dataGenerate,
-			FITableLastColumnClickEvent clickEvent) {
+			FITableControlColumnClickEvent clickEvent) {
 		this.dataGenerate = dataGenerate;
 		this.clickEvent = clickEvent;
 		refreshData(0, 10);

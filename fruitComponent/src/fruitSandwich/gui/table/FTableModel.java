@@ -5,7 +5,7 @@ import javax.swing.table.AbstractTableModel;
 import fruitSandwich.util.FArrays;
 
 /**
- * 第一列带复选框最后一列带触发事件可配置表格
+ * 第一列带复选框最后几列为带触发事件的控制列并可配置的表格模型
  * 
  * @author 杜佳恒 2014-9-26
  */
@@ -17,10 +17,12 @@ public class FTableModel extends AbstractTableModel {
 
 	private Object[][] tablePageValue;// 单元格的值
 	boolean withCheckbox;// 第一列是否带复选框
+	String[] controlColumnName;// 最后几列是否为控制列，控制列的数量
 
 	public FTableModel(String[] columnName, Object[][] pageValue,
-			boolean WITH_CHECKBOX, boolean WITH_ASSOCIATE) {
+			String[] controlColumnName, boolean WITH_CHECKBOX) {
 		this.withCheckbox = WITH_CHECKBOX;
+		this.controlColumnName = controlColumnName;
 		this.tableColumnName = columnName;
 		this.tablePageValue = pageValue;
 
@@ -37,11 +39,14 @@ public class FTableModel extends AbstractTableModel {
 			}
 			this.tablePageValue = copyObjects;
 		}
-		if (WITH_ASSOCIATE) {
+		if (controlColumnName != null && controlColumnName.length > 0) {
 			String[] copyColumnName = FArrays.moveFillLastBlank(
-					this.tableColumnName, 1);
+					this.tableColumnName, controlColumnName.length);
 			this.tableColumnName = copyColumnName;
-			this.tableColumnName[copyColumnName.length - 1] = "操作";
+			for (int i = 0; i > controlColumnName.length; i++) {
+				this.tableColumnName[this.tableColumnName.length
+						- controlColumnName.length + i] = controlColumnName[i];
+			}
 			Object[][] copyObjects = new Object[tablePageValue.length][];
 			for (int i = 0; i < tablePageValue.length; i++) {
 				copyObjects[i] = FArrays.moveFillLastBlankObject(
