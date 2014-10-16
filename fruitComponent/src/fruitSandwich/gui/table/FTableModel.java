@@ -1,7 +1,5 @@
 package fruitSandwich.gui.table;
 
-import java.util.Arrays;
-
 import javax.swing.table.AbstractTableModel;
 
 import fruitSandwich.util.FArrays;
@@ -28,8 +26,6 @@ public class FTableModel extends AbstractTableModel {
 		this.controlColumnName = controlColumnName;
 		this.tableColumnName = columnName;
 		this.tablePageValue = pageValue;
-
-		System.out.println(Arrays.toString(columnName));
 
 		if (WITH_CHECKBOX) {
 			String[] copyColumnName = FArrays.moveFillFirstBlank(
@@ -61,8 +57,6 @@ public class FTableModel extends AbstractTableModel {
 			}
 			this.tablePageValue = copyObjects;
 		}
-
-		System.out.println(Arrays.toString(columnName));
 
 	}
 
@@ -104,7 +98,9 @@ public class FTableModel extends AbstractTableModel {
 		if (withCheckbox && column == 0) {
 			return true;
 		}
-		if (column > tableColumnName.length - controlColumnName.length - 1) {
+		if (controlColumnName != null
+				&& column > tableColumnName.length - controlColumnName.length
+						- 1) {
 			return true;
 		}
 		return false;

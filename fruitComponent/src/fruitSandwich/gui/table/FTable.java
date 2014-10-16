@@ -55,7 +55,16 @@ public class FTable extends JTable implements FITableRefresh {
 		this.setDefaultRenderer(Integer.class, dtr);
 
 		this.tableShowModel = CHECKBOX;
+	}
 
+	/**
+	 * 
+	 * 初始化表格数据源
+	 * 
+	 * @param dataGenerate
+	 */
+	public void initializeDataSource(FTableDataGenerate dataGenerate) {
+		initializeDataSourceAndEvent(dataGenerate, null);
 	}
 
 	/**
@@ -67,15 +76,33 @@ public class FTable extends JTable implements FITableRefresh {
 	 *            表格控制列事件
 	 */
 	public void initializeDataSourceAndEvent(FTableDataGenerate dataGenerate,
-			List<FITableControlColumnClickEvent> controlColumnClickEvent,String[] controlColumnName) {
+			List<FITableControlColumnClickEvent> controlColumnClickEvent) {
+		initializeDataSourceAndEventAndControlColumnNames(dataGenerate,
+				controlColumnClickEvent, null);
+	}
+
+	/**
+	 * 
+	 * @param dataGenerate
+	 * @param controlColumnClickEvent
+	 * @param controlColumnName
+	 */
+	public void initializeDataSourceAndEventAndControlColumnNames(
+			FTableDataGenerate dataGenerate,
+			List<FITableControlColumnClickEvent> controlColumnClickEvent,
+			String[] controlColumnName) {
+
+		if (controlColumnName == null) {
+			controlColumnName = new String[controlColumnClickEvent.size()];
+			for (int i = 0; i < controlColumnName.length; i++) {
+				controlColumnName[i] = "操作";
+			}
+		}
+
 		this.dataGenerate = dataGenerate;
 		this.clickEventList = controlColumnClickEvent;
 		this.controlColumnName = controlColumnName;
 
-		String[] controlColumnNames = new String[clickEventList.size()];
-		for (int i = 0; i < controlColumnNames.length; i++) {
-			controlColumnNames[i] = clickEventList.get(i).getCloumnName();
-		}
 		refreshData(0, 10);
 	}
 
@@ -113,22 +140,24 @@ public class FTable extends JTable implements FITableRefresh {
 	}
 
 	/**
-	 * 渲染最后一列为链接按钮样式
+	 * 渲染控制列链接按钮样式
 	 */
 	private void renderControlColumn() {
-		for (int i = 0; i < clickEventList.size(); i++) {
-			FITableControlColumnClickEvent tableControlColumnClickEvent = clickEventList
-					.get(i);
-			FTableButtonRenderer buttonCellRenderer = new FTableButtonRenderer(
-					tableControlColumnClickEvent.getCloumnName());
-			buttonCellRenderer.setClickEvent(tableControlColumnClickEvent);
+		if (clickEventList != null) {
+			for (int i = 0; i < clickEventList.size(); i++) {
+				FITableControlColumnClickEvent tableControlColumnClickEvent = clickEventList
+						.get(i);
+				FTableButtonRenderer buttonCellRenderer = new FTableButtonRenderer(
+						tableControlColumnClickEvent.getCloumnName());
+				buttonCellRenderer.setClickEvent(tableControlColumnClickEvent);
 
-			getColumnModel().getColumn(
-					getColumnCount() - clickEventList.size() + i)
-					.setCellEditor(buttonCellRenderer);
-			getColumnModel().getColumn(
-					getColumnCount() - clickEventList.size() + i)
-					.setCellRenderer(buttonCellRenderer);
+				getColumnModel().getColumn(
+						getColumnCount() - clickEventList.size() + i)
+						.setCellEditor(buttonCellRenderer);
+				getColumnModel().getColumn(
+						getColumnCount() - clickEventList.size() + i)
+						.setCellRenderer(buttonCellRenderer);
+			}
 		}
 	}
 

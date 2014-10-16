@@ -28,6 +28,8 @@ class FTableButtonRenderer extends AbstractCellEditor implements
 	private JButton button;
 	private FITableControlColumnClickEvent clickEvent;
 
+	private int clickRow;
+
 	public void setClickEvent(FITableControlColumnClickEvent clickEvent) {
 		this.clickEvent = clickEvent;
 	}
@@ -52,11 +54,9 @@ class FTableButtonRenderer extends AbstractCellEditor implements
 		button.setSize(new Dimension(55, 15));
 
 		button.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("hello");
-				clickEvent.click(2);
+				clickEvent.click(clickRow);
 			}
 		});
 
@@ -70,6 +70,7 @@ class FTableButtonRenderer extends AbstractCellEditor implements
 
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
+		this.clickRow = row;
 		return button;
 	}
 

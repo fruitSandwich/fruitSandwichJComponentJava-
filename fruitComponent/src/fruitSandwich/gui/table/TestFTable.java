@@ -100,7 +100,6 @@ public class TestFTable {
 			public void click(int row) {
 				String value = simpleTable.getModel().getValueAt(row, 1)
 						.toString();
-				System.out.println("详情:" + value);
 				JOptionPane.showMessageDialog(frame, value);
 			}
 
@@ -115,7 +114,6 @@ public class TestFTable {
 			public void click(int row) {
 				String value = simpleTable.getModel().getValueAt(row, 1)
 						.toString();
-				System.out.println("删除:" + value);
 				JOptionPane.showMessageDialog(button, value);
 			}
 
@@ -125,30 +123,16 @@ public class TestFTable {
 			}
 		});
 
-		simpleTable.initializeDataSourceAndEvent(dataGenerate, clickEvents,
-				new String[] { "详情", "操作" });
+		simpleTable.initializeDataSourceAndEvent(dataGenerate, clickEvents);
+
+		// simpleTable.initializeDataSourceAndEventAndControlColumnNames(
+		// dataGenerate, clickEvents, new String[] { "操作", "大师傅" });
 
 		scrollPane.setViewportView(simpleTable);
 
 		FTableDefaultPagingBar tablePagingBar = new FTableDefaultPagingBar(
 				simpleTable);
 		frame.getContentPane().add(tablePagingBar, BorderLayout.SOUTH);
-
-		button = new JButton("click");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				simpleTable
-						.getColumnModel()
-						.getColumn(5)
-						.getCellRenderer()
-						.getTableCellRendererComponent(simpleTable, "sadf",
-								true, true, 3, 5);
-			}
-		});
-		frame.getContentPane().add(button, BorderLayout.NORTH);
 
 	}
 }
