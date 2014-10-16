@@ -9,7 +9,7 @@ public interface FITableControlColumnClickEvent {
 	/**
 	 * 点击事件触发事件
 	 */
-	public void click(int row);
+	public String click(int row);
 
 	public String getCloumnName();
 }

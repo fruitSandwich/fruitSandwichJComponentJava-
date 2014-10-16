@@ -5,19 +5,27 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.EventObject;
 
 /**
  * 按钮式表格渲染器
  * 
  * @author 杜佳恒 2014-9-22
  */
-class FTableButtonCellRenderer extends JPanel implements TableCellRenderer {
+class FTableButtonRenderer extends AbstractCellEditor implements
+		TableCellRenderer, TableCellEditor {
 
 	private static final long serialVersionUID = 822551354146132367L;
 
@@ -33,9 +41,8 @@ class FTableButtonCellRenderer extends JPanel implements TableCellRenderer {
 	 * 
 	 * @param text
 	 */
-	protected FTableButtonCellRenderer(String text) {
+	protected FTableButtonRenderer(String text) {
 		super();
-		setLayout(new BorderLayout(0, 0));
 
 		button = new JButton(text);
 		button.setVerticalAlignment(SwingConstants.CENTER);
@@ -47,7 +54,15 @@ class FTableButtonCellRenderer extends JPanel implements TableCellRenderer {
 		button.setBackground(Color.YELLOW);
 		button.setFont(new Font("Dialog", Font.PLAIN, 12));
 		button.setSize(new Dimension(55, 15));
-		add(button);
+
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("hello");
+				clickEvent.click(2);
+			}
+		});
 
 	}
 
@@ -55,18 +70,17 @@ class FTableButtonCellRenderer extends JPanel implements TableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
-		if (isSelected && hasFocus) {
-			clickEvent.click(row);
+		return button;
+	}
 
-			// System.out.println(new Random().nextInt());
-			// System.out.println("value:" + value);
-			// System.out.println("isSelected:" + isSelected);
-			// System.out.println("hasFocus:" + hasFocus);
-			// System.out.println("row:" + row);
-			// System.out.println("column:" + column);
-		}
+	public Component getTableCellEditorComponent(JTable table, Object value,
+			boolean isSelected, int row, int column) {
+		return button;
+	}
 
-		return this;
+	@Override
+	public Object getCellEditorValue() {
+		return null;
 	}
 
 }

@@ -17,12 +17,12 @@ public class FTableModel extends AbstractTableModel {
 
 	private Object[][] tablePageValue;// 单元格的值
 	boolean withCheckbox;// 第一列是否带复选框
-	String[] controlColumnName;// 最后几列是否为控制列，控制列的数量
+	int controlColumnIndex = 0;
 
 	public FTableModel(String[] columnName, Object[][] pageValue,
-			String[] controlColumnName, boolean WITH_CHECKBOX) {
+			int controlColumnIndex, boolean WITH_CHECKBOX) {
 		this.withCheckbox = WITH_CHECKBOX;
-		this.controlColumnName = controlColumnName;
+		this.controlColumnIndex = controlColumnIndex;
 		this.tableColumnName = columnName;
 		this.tablePageValue = pageValue;
 
@@ -31,6 +31,7 @@ public class FTableModel extends AbstractTableModel {
 					this.tableColumnName, 1);
 			this.tableColumnName = copyColumnName;
 			this.tableColumnName[0] = "选择";
+
 			Object[][] copyObjects = new Object[this.tablePageValue.length][];
 			for (int i = 0; i < tablePageValue.length; i++) {
 				copyObjects[i] = FArrays.moveFillFirstBlankObject(
@@ -39,19 +40,18 @@ public class FTableModel extends AbstractTableModel {
 			}
 			this.tablePageValue = copyObjects;
 		}
-		if (controlColumnName != null && controlColumnName.length > 0) {
+		if (controlColumnIndex > 0) {
 			String[] copyColumnName = FArrays.moveFillLastBlank(
-					this.tableColumnName, controlColumnName.length);
-			this.tableColumnName = copyColumnName;
-			for (int i = 0; i > controlColumnName.length; i++) {
-				this.tableColumnName[this.tableColumnName.length
-						- controlColumnName.length + i] = controlColumnName[i];
+					this.tableColumnName, controlColumnIndex);
+			for (int i = 0; i < controlColumnIndex; i++) {
+				copyColumnName[copyColumnName.length - controlColumnIndex + i] = "操作";
 			}
+			this.tableColumnName = copyColumnName;
+
 			Object[][] copyObjects = new Object[tablePageValue.length][];
 			for (int i = 0; i < tablePageValue.length; i++) {
 				copyObjects[i] = FArrays.moveFillLastBlankObject(
-						tablePageValue[i], 1);
-				// copyObjects[i][copyObjects[i].length - 1] = "详情";
+						tablePageValue[i], controlColumnIndex);
 			}
 			this.tablePageValue = copyObjects;
 		}
@@ -92,8 +92,11 @@ public class FTableModel extends AbstractTableModel {
 	}
 
 	@Override
-	public boolean isCellEditable(int arg0, int arg1) {
-		if (withCheckbox && arg1 == 0) {
+	public boolean isCellEditable(int row, int column) {
+		if (withCheckbox && column == 0) {
+			return true;
+		}
+		if (column > tableColumnName.length - controlColumnIndex - 1) {
 			return true;
 		}
 		return false;

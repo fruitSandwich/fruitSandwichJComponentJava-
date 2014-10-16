@@ -14,8 +14,6 @@ public class FTable extends JTable implements FITableRefresh {
 	private FTableDataGenerate dataGenerate;
 	private List<FITableControlColumnClickEvent> clickEventList;
 
-	// private String lastColumnValue = "详情";
-
 	public static final int SIMPLE_UNEDITEABLE_MODEL = 0;// 前后列都不提供功能，只显示数据用的表格
 	public static final int FIRSTCOLUMN_CHECKBOX_MODEL = 1;// 第一列提供选择复选框的表格
 
@@ -71,6 +69,11 @@ public class FTable extends JTable implements FITableRefresh {
 			List<FITableControlColumnClickEvent> controlColumnClickEvent) {
 		this.dataGenerate = dataGenerate;
 		this.clickEventList = controlColumnClickEvent;
+
+		String[] controlColumnNames = new String[clickEventList.size()];
+		for (int i = 0; i < controlColumnNames.length; i++) {
+			controlColumnNames[i] = clickEventList.get(i).getCloumnName();
+		}
 		refreshData(0, 10);
 	}
 
@@ -84,13 +87,16 @@ public class FTable extends JTable implements FITableRefresh {
 
 			switch (tableShowModel) {
 			case 0:
-				ftableModel = new FTableModel(columnName, data, null, false);
+				ftableModel = new FTableModel(columnName, data,
+						clickEventList.size(), false);
 				break;
 			case 1:
-				ftableModel = new FTableModel(columnName, data, null, true);
+				ftableModel = new FTableModel(columnName, data,
+						clickEventList.size(), true);
 				break;
 			default:
-				ftableModel = new FTableModel(columnName, data, null, false);
+				ftableModel = new FTableModel(columnName, data,
+						clickEventList.size(), false);
 				break;
 			}
 			this.setModel(ftableModel);
@@ -111,13 +117,15 @@ public class FTable extends JTable implements FITableRefresh {
 		for (int i = 0; i < clickEventList.size(); i++) {
 			FITableControlColumnClickEvent tableControlColumnClickEvent = clickEventList
 					.get(i);
-			FTableButtonCellRenderer buttonCellRenderer = new FTableButtonCellRenderer(
+			FTableButtonRenderer buttonCellRenderer = new FTableButtonRenderer(
 					tableControlColumnClickEvent.getCloumnName());
 			buttonCellRenderer.setClickEvent(tableControlColumnClickEvent);
-			this.getColumnModel()
-					.getColumn(
-							ftableModel.getColumnCount()
-									- clickEventList.size() + i)
+
+			getColumnModel().getColumn(
+					getColumnCount() - clickEventList.size() + i)
+					.setCellEditor(buttonCellRenderer);
+			getColumnModel().getColumn(
+					getColumnCount() - clickEventList.size() + i)
 					.setCellRenderer(buttonCellRenderer);
 		}
 	}

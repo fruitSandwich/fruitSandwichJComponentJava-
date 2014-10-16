@@ -2,10 +2,14 @@ package fruitSandwich.gui.table;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import fruitSandwich.gui.table.FITableControlColumnClickEvent;
 import fruitSandwich.gui.table.FTable;
@@ -17,6 +21,7 @@ import javax.swing.JScrollPane;
 public class TestFTable {
 
 	private JFrame frame;
+	JButton button;
 
 	/**
 	 * Launch the application.
@@ -86,16 +91,18 @@ public class TestFTable {
 			}
 		};
 
-		final FTable simpleTable = new FTable(FTable.FIRSTCOLUMN_CHECKBOX_MODEL);
+		final FTable simpleTable = new FTable(FTable.SIMPLE_UNEDITEABLE_MODEL);
 
 		List<FITableControlColumnClickEvent> clickEvents = new ArrayList<FITableControlColumnClickEvent>();
 		clickEvents.add(new FITableControlColumnClickEvent() {
 
 			@Override
-			public void click(int row) {
+			public String click(int row) {
 				String value = simpleTable.getModel().getValueAt(row, 1)
 						.toString();
 				System.out.println("详情:" + value);
+				JOptionPane.showMessageDialog(frame, value);
+				return simpleTable.getColumnCount() + "";
 			}
 
 			@Override
@@ -106,10 +113,12 @@ public class TestFTable {
 		clickEvents.add(new FITableControlColumnClickEvent() {
 
 			@Override
-			public void click(int row) {
+			public String click(int row) {
 				String value = simpleTable.getModel().getValueAt(row, 1)
 						.toString();
 				System.out.println("删除:" + value);
+				JOptionPane.showMessageDialog(button, value);
+				return value;
 			}
 
 			@Override
@@ -125,6 +134,22 @@ public class TestFTable {
 		FTableDefaultPagingBar tablePagingBar = new FTableDefaultPagingBar(
 				simpleTable);
 		frame.getContentPane().add(tablePagingBar, BorderLayout.SOUTH);
+
+		button = new JButton("click");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				simpleTable
+						.getColumnModel()
+						.getColumn(5)
+						.getCellRenderer()
+						.getTableCellRendererComponent(simpleTable, "sadf",
+								true, true, 3, 5);
+			}
+		});
+		frame.getContentPane().add(button, BorderLayout.NORTH);
 
 	}
 }
