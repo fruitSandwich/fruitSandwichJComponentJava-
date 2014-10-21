@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -70,7 +71,7 @@ public class TestFTable {
 					object = new Object[allNum - firstResult][names.length];
 				for (int i = 0; i < object.length; i++) {
 					for (int j = 0; j < names.length; j++) {
-						object[i][j] = (firstResult + i) + "#" + j;
+						object[i][j] = new Random().nextInt(100);// (firstResult
 					}
 				}
 				return object;
@@ -123,7 +124,7 @@ public class TestFTable {
 			}
 		});
 
-		simpleTable.initializeDataSourceAndEvent(dataGenerate, clickEvents);
+		simpleTable.initializeDataSource(dataGenerate);
 
 		// simpleTable.initializeDataSourceAndEventAndControlColumnNames(
 		// dataGenerate, clickEvents, new String[] { "操作", "大师傅" });
@@ -133,6 +134,16 @@ public class TestFTable {
 		FTableDefaultPagingBar tablePagingBar = new FTableDefaultPagingBar(
 				simpleTable);
 		frame.getContentPane().add(tablePagingBar, BorderLayout.SOUTH);
+
+		JButton button = new JButton("fresh");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				simpleTable.refreshData(0, 10);
+			}
+		});
+		frame.getContentPane().add(button, BorderLayout.NORTH);
 
 	}
 }

@@ -92,7 +92,7 @@ public class FTable extends JTable implements FITableRefresh {
 			List<FITableControlColumnClickEvent> controlColumnClickEvent,
 			String[] controlColumnName) {
 
-		if (controlColumnName == null) {
+		if (controlColumnName == null && controlColumnClickEvent != null) {
 			controlColumnName = new String[controlColumnClickEvent.size()];
 			for (int i = 0; i < controlColumnName.length; i++) {
 				controlColumnName[i] = "操作";
