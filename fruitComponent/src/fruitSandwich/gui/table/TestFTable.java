@@ -11,12 +11,6 @@ import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import fruitSandwich.gui.table.FITableControlColumnClickEvent;
-import fruitSandwich.gui.table.FTable;
-import fruitSandwich.gui.table.FTableDataGenerate;
-import fruitSandwich.gui.table.FTableDefaultPagingBar;
-
 import javax.swing.JScrollPane;
 
 public class TestFTable {
@@ -92,16 +86,15 @@ public class TestFTable {
 			}
 		};
 
-		final FTable simpleTable = new FTable(FTable.SIMPLE_UNEDITEABLE_MODEL);
+		final FTable simpleTable = new FTable(FTable.SIMPLE_UNEDITEABLE_MODEL,
+				true);
 
 		List<FITableControlColumnClickEvent> clickEvents = new ArrayList<FITableControlColumnClickEvent>();
 		clickEvents.add(new FITableControlColumnClickEvent() {
 
 			@Override
 			public void click(int row) {
-				String value = simpleTable.getModel().getValueAt(row, 1)
-						.toString();
-				JOptionPane.showMessageDialog(frame, value);
+				JOptionPane.showMessageDialog(frame, "详情" + row + "行");
 			}
 
 			@Override
@@ -113,9 +106,7 @@ public class TestFTable {
 
 			@Override
 			public void click(int row) {
-				String value = simpleTable.getModel().getValueAt(row, 1)
-						.toString();
-				JOptionPane.showMessageDialog(button, value);
+				JOptionPane.showMessageDialog(button, "删除" + row + "行");
 			}
 
 			@Override
@@ -126,8 +117,8 @@ public class TestFTable {
 
 		simpleTable.initializeDataSource(dataGenerate);
 
-		// simpleTable.initializeDataSourceAndEventAndControlColumnNames(
-		// dataGenerate, clickEvents, new String[] { "操作", "大师傅" });
+		simpleTable.initializeDataSourceAndEventAndControlColumnNames(
+				dataGenerate, clickEvents, new String[] { "详情", "删除" });
 
 		scrollPane.setViewportView(simpleTable);
 

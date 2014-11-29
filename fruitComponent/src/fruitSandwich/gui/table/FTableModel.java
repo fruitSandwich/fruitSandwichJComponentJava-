@@ -21,7 +21,8 @@ public class FTableModel extends AbstractTableModel {
 	private String[] controlColumnName;
 
 	public FTableModel(String[] columnName, Object[][] pageValue,
-			String[] controlColumnName, boolean WITH_CHECKBOX) {
+			String[] controlColumnName, boolean WITH_CHECKBOX,
+			boolean controlCloumnMultiModel) {
 		this.withCheckbox = WITH_CHECKBOX;
 		this.controlColumnName = controlColumnName;
 		this.tableColumnName = columnName;
@@ -41,12 +42,25 @@ public class FTableModel extends AbstractTableModel {
 			}
 			this.tablePageValue = copyObjects;
 		}
-		if (controlColumnName != null && controlColumnName.length > 0) {
+
+		if (controlCloumnMultiModel) {
+			String[] copyColumnName = FArrays.moveFillLastBlank(
+					this.tableColumnName, 1);
+			this.tableColumnName = copyColumnName;
+			this.tableColumnName[this.tableColumnName.length - 1] = "选择";
+
+			Object[][] copyObjects = new Object[tablePageValue.length][];
+			for (int i = 0; i < tablePageValue.length; i++) {
+				copyObjects[i] = FArrays.moveFillLastBlankObject(
+						tablePageValue[i], 1);
+			}
+			this.tablePageValue = copyObjects;
+		} else if (controlColumnName != null && controlColumnName.length > 0) {
 			String[] copyColumnName = FArrays.moveFillLastBlank(
 					this.tableColumnName, controlColumnName.length);
 			for (int i = 0; i < controlColumnName.length; i++) {
 				copyColumnName[copyColumnName.length - controlColumnName.length
-						+ i] = this.controlColumnName[i];
+						+ i] = controlColumnName[i];
 			}
 			this.tableColumnName = copyColumnName;
 

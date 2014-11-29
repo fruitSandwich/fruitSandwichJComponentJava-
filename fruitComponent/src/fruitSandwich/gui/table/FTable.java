@@ -18,15 +18,12 @@ public class FTable extends JTable implements FITableRefresh {
 	public static final int SIMPLE_UNEDITEABLE_MODEL = 0;// 前后列都不提供功能，只显示数据用的表格
 	public static final int FIRSTCOLUMN_CHECKBOX_MODEL = 1;// 第一列提供选择复选框的表格
 
+	private boolean operationColumnMultiModel = false;
 	private int tableShowModel = 0;// 是否带复选框,默认不带
 	FTableModel ftableModel;// 真实的表格模型
 
 	/**
 	 * 
-	 * @param dataGenerate
-	 *            数据源
-	 * @param controlColumnClickEvent
-	 *            控制列事件以及列名
 	 * @param CHECKBOX
 	 *            第一列是否带复选框
 	 */
@@ -55,6 +52,16 @@ public class FTable extends JTable implements FITableRefresh {
 		this.setDefaultRenderer(Integer.class, dtr);
 
 		this.tableShowModel = CHECKBOX;
+	}
+
+	/**
+	 * 
+	 * @param CHECKBOX
+	 *            第一列是否带复选框
+	 */
+	public FTable(int CHECKBOX, boolean multiCloumn) {
+		this(CHECKBOX);
+		this.operationColumnMultiModel = multiCloumn;
 	}
 
 	/**
@@ -100,6 +107,7 @@ public class FTable extends JTable implements FITableRefresh {
 		}
 
 		this.dataGenerate = dataGenerate;
+
 		this.clickEventList = controlColumnClickEvent;
 		this.controlColumnName = controlColumnName;
 
@@ -117,15 +125,15 @@ public class FTable extends JTable implements FITableRefresh {
 			switch (tableShowModel) {
 			case 0:
 				ftableModel = new FTableModel(columnName, data,
-						controlColumnName, false);
+						controlColumnName, false, operationColumnMultiModel);
 				break;
 			case 1:
 				ftableModel = new FTableModel(columnName, data,
-						controlColumnName, true);
+						controlColumnName, true, operationColumnMultiModel);
 				break;
 			default:
 				ftableModel = new FTableModel(columnName, data,
-						controlColumnName, false);
+						controlColumnName, false, operationColumnMultiModel);
 				break;
 			}
 			this.setModel(ftableModel);
@@ -144,19 +152,29 @@ public class FTable extends JTable implements FITableRefresh {
 	 */
 	private void renderControlColumn() {
 		if (clickEventList != null) {
-			for (int i = 0; i < clickEventList.size(); i++) {
-				FITableControlColumnClickEvent tableControlColumnClickEvent = clickEventList
-						.get(i);
-				FTableButtonRenderer buttonCellRenderer = new FTableButtonRenderer(
-						tableControlColumnClickEvent.getCloumnName());
-				buttonCellRenderer.setClickEvent(tableControlColumnClickEvent);
-
-				getColumnModel().getColumn(
-						getColumnCount() - clickEventList.size() + i)
-						.setCellEditor(buttonCellRenderer);
-				getColumnModel().getColumn(
-						getColumnCount() - clickEventList.size() + i)
+			FATableButtonRender buttonCellRenderer;
+			if (operationColumnMultiModel) {// 多行模式下将操作列的操作都放到一列中，按钮并排放置
+				buttonCellRenderer = new FTableMultiButtonRenderer(
+						controlColumnName, clickEventList);
+				getColumnModel().getColumn(getColumnCount() - 1).setCellEditor(
+						buttonCellRenderer);
+				getColumnModel().getColumn(getColumnCount() - 1)
 						.setCellRenderer(buttonCellRenderer);
+			} else {
+				for (int i = 0; i < clickEventList.size(); i++) {
+					FITableControlColumnClickEvent tableControlColumnClickEvent = clickEventList
+							.get(i);
+
+					buttonCellRenderer = new FTableButtonRenderer(
+							tableControlColumnClickEvent.getCloumnName(),
+							tableControlColumnClickEvent);
+					getColumnModel().getColumn(
+							getColumnCount() - clickEventList.size() + i)
+							.setCellEditor(buttonCellRenderer);
+					getColumnModel().getColumn(
+							getColumnCount() - clickEventList.size() + i)
+							.setCellRenderer(buttonCellRenderer);
+				}
 			}
 		}
 	}

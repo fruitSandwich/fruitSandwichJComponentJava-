@@ -5,12 +5,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,26 +17,20 @@ import java.awt.event.ActionListener;
  * 
  * @author 杜佳恒 2014-9-22
  */
-class FTableButtonRenderer extends AbstractCellEditor implements
-		TableCellRenderer, TableCellEditor {
+class FTableButtonRenderer extends FATableButtonRender {
 
 	private static final long serialVersionUID = 822551354146132367L;
 
 	private JButton button;
-	private FITableControlColumnClickEvent clickEvent;
-
 	private int clickRow;
-
-	public void setClickEvent(FITableControlColumnClickEvent clickEvent) {
-		this.clickEvent = clickEvent;
-	}
 
 	/**
 	 * 按钮式表单元格渲染器，参数text为显示的字样
 	 * 
 	 * @param text
 	 */
-	protected FTableButtonRenderer(String text) {
+	protected FTableButtonRenderer(String text,
+			final FITableControlColumnClickEvent clickEvent) {
 		super();
 
 		button = new JButton(text);
@@ -59,7 +50,6 @@ class FTableButtonRenderer extends AbstractCellEditor implements
 				clickEvent.click(clickRow);
 			}
 		});
-
 	}
 
 	@Override
